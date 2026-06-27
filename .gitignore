@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# Project data
+data/
+pretrained_embeddings/outputs/
+
+# Build / logs
+*.log
+*.tmp

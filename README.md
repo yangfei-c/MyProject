@@ -1,0 +1,38 @@
+# pretrained_embeddings
+
+单首音乐的预训练音频特征提取项目。
+
+## 功能
+
+- 从配置文件指定一首本地 MP3/WAV；
+- 读取为单声道；
+- 按 5 秒切片，丢弃不足 1 秒的尾段；
+- 依次提取 MERT、CLAP、AST 的片段特征；
+- 对所有片段特征求平均，得到歌曲级特征；
+- 每个模型顺序运行，避免同时占用显存。
+
+## 目录说明
+
+```text
+blog/
+├── asset/                     # 项目图片
+├── data/                      # 本地音频数据，不上传
+├── pretrained_embeddings/
+│   ├── configs/config.yaml    # 运行配置
+│   └── src/                   # 代码
+└── traditional_features/
+```
+
+## 架构图
+
+![框图](asset/框图.png)
+
+### 参数说明
+
+- `audio.path`：要处理的本地音频路径；
+- `audio.segment_seconds`：切片长度，当前固定为 5 秒；
+- `audio.minimum_seconds`：尾段最小时长，小于该值直接丢弃；
+- `runtime.device`：`auto` / `cuda` / `cpu`；
+- `runtime.output_dir`：输出目录；
+- `models.*.enabled`：是否启用对应模型；
+- `models.*.model_id`：Hugging Face 模型 ID。
