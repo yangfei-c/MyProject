@@ -2,115 +2,130 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>API 可视化测试台 (含注册功能)</title>
+    <title>API 可视化测试台 (终极安保版)</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 40px auto; background: #f0f2f5; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;}
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
         input[type="text"], input[type="password"] { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
         button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; transition: 0.2s; white-space: nowrap;}
-        .btn-add { background: #1890ff; } .btn-add:hover { background: #096dd9; }
         .btn-register { background: #52c41a; } .btn-register:hover { background: #389e0d; }
+        .btn-login { background: #722ed1; } .btn-login:hover { background: #531dab; }
+        .btn-add { background: #1890ff; } .btn-add:hover { background: #096dd9; }
         .btn-delete { background: #ff4d4f; padding: 5px 10px; font-size: 12px; }
         .todo-list { list-style: none; padding: 0; }
         .todo-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
         .todo-item:last-child { border-bottom: none; }
-        .completed span { text-decoration: line-through; color: #999; }
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
-        .dot-green { background-color: #52c41a; } .dot-red { background-color: #ff4d4f; }
         .auth-section { background: #e6f7ff; padding: 15px; border-radius: 8px; border: 1px solid #91d5ff;}
+        .token-box { background: #f6ffed; border: 1px solid #b7eb8f; padding: 10px; border-radius: 5px; word-break: break-all; font-family: monospace; font-size: 12px; color: #389e0d; display: none;}
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>🚀 FastAPI 前端测试台</h2>
-        <p>API 状态: <span class="status-dot dot-red" id="api-status"></span><span id="status-text">未连接</span></p>
-    </div>
-
     <div class="card auth-section">
-        <h3 style="margin-top: 0;">👤 步骤 1：新用户注册测试</h3>
+        <h3 style="margin-top: 0;">👤 步骤 1：账号系统 (注册/登录)</h3>
         <div class="input-group">
-            <input type="text" id="reg-username" placeholder="输入你想注册的账号">
-            <input type="password" id="reg-password" placeholder="输入密码">
-            <button class="btn-register" onclick="registerUser()">发送注册请求</button>
+            <input type="text" id="username" placeholder="输入账号">
+            <input type="password" id="password" placeholder="输入密码">
+            <button class="btn-register" onclick="registerUser()">注册</button>
+            <button class="btn-login" onclick="loginUser()">登录</button>
         </div>
-        <p id="reg-msg" style="font-size: 14px; margin: 0; font-weight: bold;"></p>
+        <p id="auth-msg" style="font-size: 14px; margin: 0; font-weight: bold;"></p>
+        <div id="token-display" class="token-box"></div>
     </div>
 
     <div class="card">
-        <h3 style="margin-top: 0;">📝 步骤 2：待办事项大厅 (公共可见)</h3>
+        <h3 style="margin-top: 0;">📝 步骤 2：我的专属待办大厅 (必须登录)</h3>
         <div class="input-group">
             <input type="text" id="new-todo-title" placeholder="输入新的待办事项...">
             <button class="btn-add" onclick="createTodo()">发送 POST</button>
         </div>
-        <ul class="todo-list" id="list-container"></ul>
+        <ul class="todo-list" id="list-container">
+            <li style="color: red; font-size: 14px;">请先在上方登录，拿到通行证后才能查看和操作数据！</li>
+        </ul>
     </div>
 
     <script>
         const BASE_URL = "http://127.0.0.1:8000";
+        let myAccessToken = ""; // 网页刷新后会清空，需要重新登录
 
-        window.onload = fetchTodos;
+        // 生成带 Token 的请求头 (这就是前端刷卡的核心逻辑！)
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myAccessToken}` // 把通行证放在头部
+            };
+        }
 
-        // 🌟 新增：请求后端的注册接口
         async function registerUser() {
-            const username = document.getElementById('reg-username').value;
-            const password = document.getElementById('reg-password').value;
-            const msgBox = document.getElementById('reg-msg');
-
-            if (!username || !password) {
-                msgBox.innerText = "⚠️ 用户名和密码不能为空！";
-                msgBox.style.color = "#d48806";
-                return;
-            }
-
-            msgBox.innerText = "注册中...";
-            msgBox.style.color = "gray";
-
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const msgBox = document.getElementById('auth-msg');
+            if (!username || !password) return;
             try {
-                // 对应你的 /auth/register 接口
                 const res = await fetch(`${BASE_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username, password: password })
+                    body: JSON.stringify({ username, password })
                 });
-
                 const data = await res.json();
-
-                if (res.ok) {
-                    msgBox.innerText = `✅ ${data.message}`;
-                    msgBox.style.color = "green";
-                } else {
-                    // 如果用户名重复，拦截显示的错误信息在这里
-                    msgBox.innerText = `❌ 失败: ${data.detail}`;
-                    msgBox.style.color = "red";
-                }
-            } catch (err) {
-                msgBox.innerText = "❌ 网络错误，检查你的 FastAPI 和 auth 路由是否正常启动！";
-                msgBox.style.color = "red";
-            }
+                msgBox.innerText = res.ok ? `✅ ${data.message}` : `❌ 失败: ${data.detail}`;
+                msgBox.style.color = res.ok ? "green" : "red";
+            } catch (err) { msgBox.innerText = "❌ 网络错误"; }
         }
 
-        // --- 下面是之前的增删改查逻辑，无需修改 ---
-        async function fetchTodos() {
+        async function loginUser() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const msgBox = document.getElementById('auth-msg');
+            const tokenBox = document.getElementById('token-display');
+            if (!username || !password) return;
+
+            const formData = new URLSearchParams();
+            formData.append("username", username);
+            formData.append("password", password);
+
             try {
-                const res = await fetch(`${BASE_URL}/todos`);
-                if (!res.ok) throw new Error("网络错误");
+                const res = await fetch(`${BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
                 const data = await res.json();
-                document.getElementById('api-status').className = 'status-dot dot-green';
-                document.getElementById('status-text').innerText = '已连接到 FastAPI';
+                if (res.ok) {
+                    msgBox.innerText = "✅ 登录成功！已获取 VIP 通行证！";
+                    msgBox.style.color = "green";
+                    myAccessToken = data.access_token;
+                    tokenBox.style.display = "block";
+                    tokenBox.innerText = `Token: ${myAccessToken.substring(0, 30)}...`;
+
+                    fetchTodos(); // 登录成功后，立刻拉取只属于我的数据
+                } else {
+                    msgBox.innerText = "❌ 登录失败：账号或密码错误";
+                    msgBox.style.color = "red";
+                }
+            } catch (err) { msgBox.innerText = "❌ 网络错误"; }
+        }
+
+        async function fetchTodos() {
+            if (!myAccessToken) return; // 没拿到通行证就不发请求
+            try {
+                const res = await fetch(`${BASE_URL}/todos`, {
+                    headers: getAuthHeaders() // 发送请求时带上头部（刷卡）
+                });
+                if (!res.ok) throw new Error("认证失败");
+                const data = await res.json();
                 renderList(data);
             } catch (err) {
-                document.getElementById('api-status').className = 'status-dot dot-red';
-                document.getElementById('status-text').innerText = '连接失败，请检查 CORS 和 Uvicorn';
+                document.getElementById('list-container').innerHTML = "<li style='color:red'>登录已过期，请重新登录</li>";
             }
         }
 
         async function createTodo() {
             const titleInput = document.getElementById('new-todo-title');
-            if (!titleInput.value) return;
+            if (!titleInput.value || !myAccessToken) return alert("请先登录或输入内容！");
             await fetch(`${BASE_URL}/todos`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(), // 刷卡
                 body: JSON.stringify({ title: titleInput.value, completed: false })
             });
             titleInput.value = '';
@@ -118,22 +133,26 @@
         }
 
         async function deleteTodo(id) {
-            await fetch(`${BASE_URL}/todos/${id}`, { method: 'DELETE' });
+            await fetch(`${BASE_URL}/todos/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders() // 刷卡
+            });
             fetchTodos();
         }
 
         function renderList(todos) {
             const container = document.getElementById('list-container');
             container.innerHTML = '';
+            if (todos.length === 0) {
+                container.innerHTML = "<li style='color:gray'>暂无待办事项，赶紧添加一个吧！</li>";
+                return;
+            }
             todos.forEach(todo => {
                 const li = document.createElement('li');
-                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.className = 'todo-item';
                 li.innerHTML = `
-                    <div>
-                        <input type="checkbox" ${todo.completed ? 'checked' : ''} disabled>
-                        <span>ID:${todo.id} - ${todo.title}</span>
-                    </div>
-                    <button class="btn-delete" onclick="deleteTodo(${todo.id})">发送 DELETE</button>
+                    <div>ID: ${todo.id} | 所有者ID: ${todo.owner_id} | <strong>${todo.title}</strong></div>
+                    <button class="btn-delete" onclick="deleteTodo(${todo.id})">删除</button>
                 `;
                 container.appendChild(li);
             });
