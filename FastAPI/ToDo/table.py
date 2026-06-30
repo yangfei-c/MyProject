@@ -1,0 +1,19 @@
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
+
+Base = declarative_base()
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True,index=True)
+    hash_password = Column(String)
+    todos=relationship("DBToDo", back_populates="owner")
+
+class DBToDo(Base):
+    __tablename__ = "todos"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    completed = Column(Boolean, default=False)
+
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="todos")
