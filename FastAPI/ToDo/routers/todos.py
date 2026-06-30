@@ -1,22 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy.orm import Session
 
-# 1. 数据库配置和模型
-database_url = "sqlite:///./todos.db"
-engine = create_engine(database_url, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
-class DBToDo(Base):
-    __tablename__ = "todos"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    completed = Column(Boolean, default=False)
-
-Base.metadata.create_all(engine)
+from database import get_db
+from table import DBToDo
 
 class ToDoCreate(BaseModel):
     title: str
@@ -26,21 +15,12 @@ class ToDoResponse(BaseModel):
     id: int
     title: str
     completed: bool
+    owner_id: int | None = None  # 顺便加个字段，以后前端能看到是谁创建的
+
     class Config:
         from_attributes = True
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# 2. 部门经理路由
-router = APIRouter(
-    prefix="/todos",
-    tags=["待办事项"]
-)
+router = APIRouter(prefix="/todos", tags=["待办事项"])
 
 @router.get("", response_model=List[ToDoResponse])
 def get_all_todos(db: Session = Depends(get_db)):

@@ -1,12 +1,15 @@
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import  relationship
 
-Base = declarative_base()
+from database import Base
+
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True,index=True)
     hash_password = Column(String)
+
     todos=relationship("DBToDo", back_populates="owner")
 
 class DBToDo(Base):
