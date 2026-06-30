@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from typing import List
-from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 pwd_content = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 from database import get_db
