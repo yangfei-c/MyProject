@@ -1,28 +1,21 @@
-from fastapi import FastAPI,HTTPException
-from pydantic import BaseModel
-from typing import List
-app=FastAPI(title="待办事项")
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-class ToDoItem(BaseModel):
-    id:int
-    title:str
-    completed:bool
+from routers import todos
 
-moni_db:List[ToDoItem]=[]
+app = FastAPI(title="代办事项 API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 挂载路由
+app.include_router(todos.router)
 
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to the To-Do List API"}
-
-@app.get("/todos",response_model=List[ToDoItem])
-def get_all_todos():
-    return moni_db
-
-@app.post("/todos",response_model=ToDoItem)
-def create_todo(todo:ToDoItem):
-    for item in moni_db:
-        if item.id==todo.id:
-            raise HTTPException(status_code=400,detail="ID already exists")
-
-    moni_db.append(todo)
-    return todo
+def root():
+    return {"message": "运行正常"}
