@@ -1,0 +1,21 @@
+audio:
+  path: "../data/fma_small/000/000002.mp3"
+  segment_seconds: 5
+  minimum_seconds: 1
+
+runtime:
+  device: "auto"
+  output_dir: "outputs"
+
+models:
+  mert:
+    enabled: true
+    model_id: "m-a-p/MERT-v1-95M"
+
+  clap:
+    enabled: true
+    model_id: "laion/clap-htsat-unfused"
+
+  ast:
+    enabled: true
+    model_id: "MIT/ast-finetuned-audioset-10-10-0.4593"
