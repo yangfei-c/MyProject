@@ -1,0 +1,6 @@
+# IDE
+.idea/
+.vscode/
+
+# Local inspection artifacts
+diff_inspect.txt
