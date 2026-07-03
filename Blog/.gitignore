@@ -19,3 +19,4 @@ pretrained_embeddings/outputs/
 # Build / logs
 *.log
 *.tmp
+sricpts/
