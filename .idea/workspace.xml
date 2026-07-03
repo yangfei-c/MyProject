@@ -4,10 +4,8 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f933642-b36d-4c31-bb03-ff0278ea76f7" name="Changes" comment="&quot;第二篇博客源码及第一篇修改&quot;">
+    <list default="true" id="0f933642-b36d-4c31-bb03-ff0278ea76f7" name="Changes" comment="&quot;引入README文档&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Blog/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Blog/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Blog/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Blog/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -277,7 +275,7 @@
       <workItem from="1782889865868" duration="9415000" />
       <workItem from="1783044430050" duration="1869000" />
       <workItem from="1783046334426" duration="2144000" />
-      <workItem from="1783050382814" duration="1690000" />
+      <workItem from="1783050382814" duration="2328000" />
     </task>
     <task id="LOCAL-00001" summary="增加.gitignore">
       <option name="closed" value="true" />
@@ -367,7 +365,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783051645580</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="&quot;引入README文档&quot;">
+      <option name="closed" value="true" />
+      <created>1783052094794</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1783052094794</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -384,7 +390,8 @@
     <MESSAGE value="&quot;第二篇博客源码&quot;" />
     <MESSAGE value="&quot;引入README.md&quot;" />
     <MESSAGE value="&quot;第二篇博客源码及第一篇修改&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;第二篇博客源码及第一篇修改&quot;" />
+    <MESSAGE value="&quot;引入README文档&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;引入README文档&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
