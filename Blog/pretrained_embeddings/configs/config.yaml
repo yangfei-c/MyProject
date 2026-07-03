@@ -1,5 +1,5 @@
 audio:
-  path: "../data/fma_small/000/000002.mp3"
+  path: "../data/000002.mp3"
   segment_seconds: 5
   minimum_seconds: 1
 
