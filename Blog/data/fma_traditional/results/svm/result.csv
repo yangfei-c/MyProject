@@ -1,0 +1,2 @@
+﻿model,val_accuracy,val_macro_f1,test_accuracy,test_macro_f1
+svm,0.4675,0.43894605424618494,0.38,0.36510658757066783

@@ -1,0 +1,2 @@
+﻿model,val_accuracy,val_macro_f1,test_accuracy,test_macro_f1
+random,0.125,0.1251352600138691,0.135,0.13430112802884855
