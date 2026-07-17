@@ -10,7 +10,7 @@ from feature_extractor import extract_feature
 # config
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 JSONL_PATH = PROJECT_ROOT / "data" / "fma_metadata" / "tracks.jsonl"
-OUTPUT_PATH = PROJECT_ROOT / "data" / "fma_traditional_features" / "fma_small_features.csv"
+OUTPUT_PATH = PROJECT_ROOT / "data" / "fma_traditional/features" / "fma_small_features.csv"
 SR = 22050
 LIMIT = None
 

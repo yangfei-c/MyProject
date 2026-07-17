@@ -13,7 +13,9 @@ env/
 .vscode/
 
 # Project data
-data/
+data/fma_metadata
+data/fma_small
+data/fma_traditional/features
 pretrained_embeddings/outputs/
 
 # Build / logs
