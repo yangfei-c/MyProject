@@ -23,7 +23,7 @@ RESULT_DIR = (
 )
 
 # "random","svm","logistic","random_forest",
-MODEL_NAME = "svm"
+MODEL_NAME = "random_forest"
 
 
 def main():
