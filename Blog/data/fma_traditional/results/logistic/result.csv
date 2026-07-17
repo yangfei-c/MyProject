@@ -1,0 +1,2 @@
+﻿model,val_accuracy,val_macro_f1,test_accuracy,test_macro_f1
+logistic,0.4725,0.45956412452818685,0.3825,0.3774233122938857
